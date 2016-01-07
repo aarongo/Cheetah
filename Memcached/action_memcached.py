@@ -9,7 +9,6 @@ import argparse
 import sys
 import subprocess
 
-
 # 获取 Memcached 程序 pid~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def process_id():
     pid = {}  # 存放获取到的进程 ID 服务端口
@@ -69,7 +68,7 @@ def select_start(parameter):
     # 获取参数
     port = parameter.port
     user = parameter.user
-    memcached_home = "/usr/local/bin/"  # 定义 Memcached_home目录
+    memcached_home = "/software/memcached"  # 定义 Memcached_home目录
     try:
         int(port)
         if port in process_id().keys():
