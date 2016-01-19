@@ -1,0 +1,13 @@
+1.安装 Apache PHP 环境
+2.解压phpMemcachedAdmin-1.2.2-r262.tar.gz 到 /var/www/html/memcached
+3.更改Apache 配置文件
+/etc/httpd/conf.d/memcached.conf
+<VirtualHost *:80>
+    ServerName   10.90.10.246 #服务器名称 或者 IP 地址
+    UseCanonicalName Off
+    ServerAdmin  "10.90.10.246"
+    DocumentRoot "/var/www/html/memcached" #Memcached 监控项目存放的位置 此处需要注意下权限
+    CustomLog  /var/log//httpd/10.90.10.246-access_log common
+    ErrorLog   /var/log/httpd/10.90.10.246-error_log
+</VirtualHost>
+4.重启 Apache 访问:http://10.90.10.246
