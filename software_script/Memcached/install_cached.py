@@ -53,7 +53,7 @@ def install(mem_path, lib_path):
     # 解压文件结束
     # 安装 libevent
     os.chdir(libevent_url.split('/')[5].split('.tar.gz')[0])
-    install_command = "./configure --prefix=%s && make && make install" % lib_path
+    install_command = "sudo ./configure --prefix=%s && sudo make && sudo make install" % lib_path
     proc = subprocess.Popen(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
     print "*" * 10 + "\033[31mExit Code: %s\033[0m" % proc.returncode + "*" * 10
@@ -65,7 +65,7 @@ def install(mem_path, lib_path):
     t_mem.extractall(".")
     t_mem.close()
     os.chdir(memcached_url.split('/')[5].split('.tar.gz')[0])
-    install_memcached = "./configure --prefix=%s --with-libevent=%s && make && make install" % (mem_path, lib_path)
+    install_memcached = "sudo ./configure --prefix=%s --with-libevent=%s && sudo make && sudo make install" % (mem_path, lib_path)
     proc_m = subprocess.Popen(install_memcached, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc_m.communicate()
     print "*" * 10 + "\033[31mexit code:%s\033[0m" % proc_m.returncode + "*" * 10
