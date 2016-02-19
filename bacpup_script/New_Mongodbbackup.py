@@ -117,11 +117,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Mongodb Backup Rewrite')
     parser.add_argument('-H', '--Host', help="Send backupfiles Host IP", required='True')
     parser.add_argument('-u', '--user', help='Remote Host User', default='root')
-    if len(sys.argv) <= 1:
+    parser.add_argument('-S', '--database', help="Designation Mongodb Database", required='True')
+    if len(sys.argv) <= 2:
         parser.print_help()
         sys.exit(1)
+    args = parser.parse_args()
     ### Set Use Info
-    mongodb_DB_Name = 'ceshi'
+    mongodb_DB_Name = args.database
     Now = datetime.datetime.now().strftime('%Y-%m-%d-%H')
     backup_file_name = "Mongodb-%s-%s.tar.gz" % (mongodb_DB_Name, Now)
     password = "RPBqoTbJyuhaHVRrc#RX23ox="
@@ -131,7 +133,6 @@ if __name__ == "__main__":
     ### Set Use -->End
     M_Backup = MongodbBackup()
     M_Backup.local_backup(backup_file_name, Now, mongodb_DB_Name)
-    args = parser.parse_args()
     print "\033[31mSend Backup Files To Remote Server\033[0m"
     ssh = SSHConnection(args.Host, args.user, password)
     ssh.put(local_path=LocalBackupFiles, remote_path=Remote_Backup_Path)
