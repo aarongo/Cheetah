@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # _*_coding:utf-8_*_
-#  author:  'lonny'
-# dateTime:  '15/12/15'
-#   motto:  'Good memory as bad written'
+# Author: "Edward.Liu"
+# Author-Email: lonnyliu@126.com
 
 import os
 import sys
