@@ -33,6 +33,8 @@ class Tomcat(object):
         self.images_Home = "/install/upload"
         self.static_assets = "%s/assets" % self.dest_dir
         self.static_images_lins = "%s/assets/upload" % self.dest_dir
+        self.static_Home = "/data/www"
+        self.static_home_link = "%s/www" % self.dest_dir
         # deploy options --->end
 
     # Get Tomcat_PID~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,17 +123,21 @@ class Tomcat(object):
             print "\033[32mCreating Static Files/Images Link\033[0m "
             if os.path.exists(self.static_assets):
                 os.symlink(self.images_Home, self.static_images_lins)
+                os.symlink(self.static_Home, self.static_home_link)
             else:
                 os.makedirs(self.static_assets)
                 os.symlink(self.images_Home, self.static_images_lins)
+                os.symlink(self.static_Home, self.static_home_link)
             os.symlink(self.dest_dir, self.dest_deploy_dir)
         else:
             print "\033[32mCreating Static Files/Images Link\033[0m "
             if os.path.exists(self.static_assets):
                 os.symlink(self.images_Home, self.static_images_lins)
+                os.symlink(self.static_Home, self.static_home_link)
             else:
                 os.makedirs(self.static_assets)
                 os.symlink(self.images_Home, self.static_images_lins)
+                os.symlink(self.static_Home, self.static_home_link)
             os.symlink(self.dest_dir, self.dest_deploy_dir)
 
     def get_status_code(self, host, path="/"):
