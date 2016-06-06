@@ -107,8 +107,8 @@ def select_start(parameter):
 def select_status(parameter):
     if str(parameter.port) in process_id().keys():
         print "\033[32mMemcached的端口为:%s\033[0m" % str(
-                parameter.port) + "\n" + "*" * 20 + "\n" + "\033[32mMemcached端口的 PID:%s\033[0m" % \
-                                                           process_id()[str(parameter.port)]
+            parameter.port) + "\n" + "*" * 20 + "\n" + "\033[32mMemcached端口的 PID:%s\033[0m" % \
+                                                       process_id()[str(parameter.port)]
     elif str(parameter.port) == 'all':
         for s in process_id().keys():
             print "-" * 40
