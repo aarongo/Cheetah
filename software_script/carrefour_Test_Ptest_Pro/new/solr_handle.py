@@ -11,10 +11,10 @@ import sys
 import signal
 import os
 import argparse
-import contextlib
-import zipfile
 import httplib
 import socket
+import fcntl
+import struct
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,6 +27,15 @@ class Tomcat(object):
         # deploy options
         self.timeStr = time.strftime("%Y-%m-%d-%H:%M")
         # deploy options --->end
+
+    # Get HostName IPaddress
+    def get_ip_address(self, ifname):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        return socket.inet_ntoa(fcntl.ioctl(
+            s.fileno(),
+            0x8915,  # SIOCGIFADDR
+            struct.pack('256s', ifname[:15])
+        )[20:24])
 
     # Get Tomcat_PID~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def get_tomcat_pid(self):
@@ -101,7 +110,7 @@ class Tomcat(object):
 
     def check_arg(self, args=None):
         parser = argparse.ArgumentParser(
-                description="EG: '%(prog)s'  -d start|stop|restart|status|log")
+            description="EG: '%(prog)s'  -d start|stop|restart|status|log")
         # ADD Tomcat Apps ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         parser.add_argument('-d', '--handle', default='log',
                             help='Input One of the {start|stop|status|restart|log}')
@@ -130,12 +139,12 @@ if __name__ == '__main__':
             Handle.start_tomcat()
         elif args.handle == 'status':
             if Handle.get_tomcat_pid() is not None:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
+                ipaddress_port = Handle.get_ip_address('eth1') + ":80"
                 front_return_code = Handle.get_status_code(host=ipaddress_port, path='/solr')
                 print "#" * 40
                 print "\033[32m %s Is Running is PID:\033[0m" % Handle.tomcat_exe + "\033[31m %s \033[0m" % Handle.get_tomcat_pid()
                 if front_return_code == 200:
-                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mCheck URL:http://%s/login\033[0m" % ipaddress_port
+                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mCheck URL:http://%s/solr\033[0m" % ipaddress_port
                 else:
                     print "\033[32mProcess Is Exist Service Is Not available\033[0m"
                 print "#" * 40

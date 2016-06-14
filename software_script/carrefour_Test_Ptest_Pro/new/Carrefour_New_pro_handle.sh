@@ -66,7 +66,7 @@ remote_handle(){
     done
 }
 tomcat_status(){
-    for ip in "${!web_address_list[@]}";
+    for address in "${!web_address_list[@]}";
     do
     {
             ssh -tt ${web_address_list[${address}]} "/software/script/carrefour_front.py -d ${handle}"

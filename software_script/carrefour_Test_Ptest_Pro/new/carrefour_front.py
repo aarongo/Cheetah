@@ -211,14 +211,14 @@ if __name__ == '__main__':
             Handle.start_tomcat()
             print "\033[31mWaiting Front Started SuccessFul!!!.......\033[0m"
             while True:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":80"
+                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
                 front_return_code = Handle.get_status_code(host=ipaddress_port, path='/login')
                 if front_return_code == 200:
                     print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mCheck URL:http://%s/login\033[0m" % ipaddress_port
                     break
         elif args.handle == 'status':
             if Handle.get_tomcat_pid() is not None:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":80"
+                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
                 front_return_code = Handle.get_status_code(host=ipaddress_port, path='/login')
                 print "#" * 40
                 print "\033[32m %s Is Running is PID:\033[0m" % Handle.tomcat_exe + "\033[31m %s \033[0m" % Handle.get_tomcat_pid()
@@ -238,7 +238,7 @@ if __name__ == '__main__':
             Handle.start_tomcat()
             print "\033[32mWaiting Process Start\033[0m"
             while True:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":80"
+                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
                 front_return_code = Handle.get_status_code(host=ipaddress_port, path='/login')
                 if front_return_code == 200:
                     print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mRollback Last Deployment SuccessFul\033[0m"
@@ -247,4 +247,3 @@ if __name__ == '__main__':
             print "\033[31mYou Input parameter Is Not Exist\033[0m"
     except TypeError:
         args.print_help()
-
