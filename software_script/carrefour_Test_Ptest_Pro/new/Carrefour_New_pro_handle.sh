@@ -6,7 +6,7 @@
 #Set Global Parameters
 proxy_user=ecommerce_china
 proxy_password=xK8-4=gF
-download_url=http://124.200.96.150:8081/
+download_url=http://182.50.117.44:8081/
 source_war_path=/software
 source_war_files="cybershop-front-0.0.1-SNAPSHOT.war"
 handle="$1"
@@ -19,6 +19,7 @@ web_address_list=(10.171.112.1 10.171.112.2 10.171.112.3 10.171.112.4 10.171.112
 
 download_war(){
     #判断 war 是否存在
+    cd ${source_war_path}
     if [ -f "${source_war_files}" ]; then
         rm -rf ${source_war_path}/${source_war_files}
         echo -en "\033[32mEnter You DownLoad Files > \033[0m"
@@ -36,14 +37,20 @@ download_war(){
 
 }
 handle_files(){
-    #处理下载后的文件
-    printf "\e[32mHanlde Files ${Files_Name}..........\n\e[0m"
+    
     #截取输入的文件后续目录可用
-    after_tar=${Files_Name%%.*}
-    tar xzvf ${source_war_path}/${Files_Name} -C ${source_war_path}
-    mv ${source_war_path}/${after_tar}/${source_war_files} ${source_war_path}/
-    rm -rf ${source_war_path}/${after_tar} && rm -rf ${source_war_path}/${Files_Name}
-    printf "\e[32mHandle Files End.......\n\e[0m"
+    if [ ! ${Files_Name} ]; then
+        echo "\033[31m Files_Name variable Is Null"
+    else
+        #处理下载后的文件
+        printf "\e[32mHanlde Files ${Files_Name}..........\n\e[0m"
+        after_tar=${Files_Name%%.*}
+        tar xzvf ${source_war_path}/${Files_Name} -C ${source_war_path}
+        mv ${source_war_path}/${after_tar}/${source_war_files} ${source_war_path}/
+        rm -rf ${source_war_path}/${after_tar} && rm -rf ${source_war_path}/${Files_Name}
+        printf "\e[32mHandle Files End.......\n\e[0m"
+    fi
+    
     #文件处理完毕
 }
 remote_handle(){
