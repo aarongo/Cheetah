@@ -4,7 +4,7 @@
 # Author-Email: lonnyliu@126.com
 
 
-# Import libary~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Import libary~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import subprocess
 import time
 import sys
@@ -20,27 +20,27 @@ import socket
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Tomcat(object):
     def __init__(self):
-        self.tomcat_exe = "tomcat_" + "front"
+        self.tomcat_exe = "tomcat_" + "web"
         self.Tomcat_Home = "/software/%s" % self.tomcat_exe
         self.Tomcat_Log_Home = "/software/%s/logs" % self.tomcat_exe
         self.counnt = 10
         # deploy options
         self.timeStr = time.strftime("%Y-%m-%d-%H:%M")
-        self.source_files = "/software/cybershop-front-0.0.1-SNAPSHOT.war"
+        self.source_files = "/software/cybershop-web-0.0.1-SNAPSHOT.war"
         self.dest_dir = "/software/upload_project/%s-%s" % (
             self.timeStr, self.source_files.split('/')[2].split('.war')[0])
-        self.dest_deploy_dir = "/software/deploy_front/%s" % self.source_files.split('/')[2].split('.war')[0]
+        self.dest_deploy_dir = "/software/deploy_web/%s" % self.source_files.split('/')[
+            2].split('.war')[0]
         self.images_Home = "/software/picture_upload"
         self.static_assets = "%s/assets" % self.dest_dir
         self.static_images_lins = "%s/assets/upload" % self.dest_dir
-        self.static_Home = "/data/www"
-        self.static_home_link = "%s/www" % self.dest_dir
         # deploy options --->end
 
     # Get Tomcat_PID~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def get_tomcat_pid(self):
         # 自定义获取程序 pid 与启动命令
-        p = subprocess.Popen(['ps', '-Ao', 'pid,command'], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['ps', '-Ao', 'pid,command'],
+                             stdout=subprocess.PIPE)
         out, err = p.communicate()
         for line in out.splitlines():
             if 'java' in line:
@@ -65,7 +65,7 @@ class Tomcat(object):
             stdout, stderr = p.communicate()
             print stdout, stderr
 
-    # Stop Tomcat process~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Stop Tomcat process~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def stop_tomcat(self):
         wait_sleep = 0
         if self.get_tomcat_pid() is None:
@@ -89,7 +89,8 @@ class Tomcat(object):
     # View TomcatLogs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def tomcat_log(self):
         command_tomcat_log = "tail -f %s/catalina.out " % self.Tomcat_Log_Home
-        p = subprocess.Popen(command_tomcat_log, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(command_tomcat_log, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         returncode = p.poll()
         try:
             while returncode is None:
@@ -101,7 +102,7 @@ class Tomcat(object):
         except KeyboardInterrupt:
             print 'ctrl+d or z'
 
-    # Unzip Project_name~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Unzip Project_name~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def unzip(self):
         ret = 0
         try:
@@ -123,21 +124,17 @@ class Tomcat(object):
             print "\033[32mCreating Static Files/Images Link\033[0m "
             if os.path.exists(self.static_assets):
                 os.symlink(self.images_Home, self.static_images_lins)
-                os.symlink(self.static_Home, self.static_home_link)
             else:
                 os.makedirs(self.static_assets)
                 os.symlink(self.images_Home, self.static_images_lins)
-                os.symlink(self.static_Home, self.static_home_link)
             os.symlink(self.dest_dir, self.dest_deploy_dir)
         else:
             print "\033[32mCreating Static Files/Images Link\033[0m "
             if os.path.exists(self.static_assets):
                 os.symlink(self.images_Home, self.static_images_lins)
-                os.symlink(self.static_Home, self.static_home_link)
             else:
                 os.makedirs(self.static_assets)
                 os.symlink(self.images_Home, self.static_images_lins)
-                os.symlink(self.static_Home, self.static_home_link)
             os.symlink(self.dest_dir, self.dest_deploy_dir)
 
     def get_status_code(self, host, path="/"):
@@ -175,12 +172,13 @@ class Tomcat(object):
 
     def check_arg(self, args=None):
         parser = argparse.ArgumentParser(
-                description="~~~~~~~~~~~~~~~ 此脚本部署 carrefour-front-pro(生成环境部署)"
-                            "EG: '%(prog)s'  -d start|stop|restart|status|log|deploy")
-        # ADD Tomcat Apps ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            description="~~~~~~~~~~~~~~~ 此脚本部署 carrefour-web-pro(生成环境部署)"
+            "EG: '%(prog)s'  -d start|stop|restart|status|log|deploy")
+        # ADD Tomcat webs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         parser.add_argument('-d', '--handle', default='log',
                             help='Input One of the {start|stop|status|restart|log|deploy}')  # nargs='?' 有一个货没有参数都可以
-        parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
+        parser.add_argument('-v', '--version',
+                            action='version', version='%(prog)s 1.0')
 
         if len(sys.argv) <= 2:
             parser.print_help()
@@ -209,21 +207,25 @@ if __name__ == '__main__':
             if Handle.unzip() != 0:
                 Handle.soft_link()
             Handle.start_tomcat()
-            print "\033[31mWaiting Front Started SuccessFul!!!.......\033[0m"
+            print "\033[31mWaiting web Started SuccessFul!!!.......\033[0m"
             while True:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
-                front_return_code = Handle.get_status_code(host=ipaddress_port, path='/login')
-                if front_return_code == 200:
-                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mCheck URL:http://%s/login\033[0m" % ipaddress_port
+                ipaddress_port = socket.gethostbyname(
+                    socket.gethostname()) + ":8080"
+                web_return_code = Handle.get_status_code(
+                    host=ipaddress_port, path='/login')
+                if web_return_code == 200:
+                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % web_return_code + "\033[32mCheck URL:http://%s/login\033[0m" % ipaddress_port
                     break
         elif args.handle == 'status':
             if Handle.get_tomcat_pid() is not None:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
-                front_return_code = Handle.get_status_code(host=ipaddress_port, path='/login')
+                ipaddress_port = socket.gethostbyname(
+                    socket.gethostname()) + ":8080"
+                web_return_code = Handle.get_status_code(
+                    host=ipaddress_port, path='/login')
                 print "#" * 40
                 print "\033[32m %s Is Running is PID:\033[0m" % Handle.tomcat_exe + "\033[31m %s \033[0m" % Handle.get_tomcat_pid()
-                if front_return_code == 200:
-                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mCheck URL:http://%s/login\033[0m" % ipaddress_port
+                if web_return_code == 200:
+                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % web_return_code + "\033[32mCheck URL:http://%s/login\033[0m" % ipaddress_port
                 else:
                     print "\033[32mProcess Is Exist Service Is Not available\033[0m"
                 print "#" * 40
@@ -238,12 +240,15 @@ if __name__ == '__main__':
             Handle.start_tomcat()
             print "\033[32mWaiting Process Start\033[0m"
             while True:
-                ipaddress_port = socket.gethostbyname(socket.gethostname()) + ":8080"
-                front_return_code = Handle.get_status_code(host=ipaddress_port, path='/login')
-                if front_return_code == 200:
-                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % front_return_code + "\033[32mRollback Last Deployment SuccessFul\033[0m"
+                ipaddress_port = socket.gethostbyname(
+                    socket.gethostname()) + ":8080"
+                web_return_code = Handle.get_status_code(
+                    host=ipaddress_port, path='/login')
+                if web_return_code == 200:
+                    print "\033[32m %s Process Is Exist Service Is available Return Code:\033[0m" % Handle.tomcat_exe + "\033[31m%s\033[0m" % web_return_code + "\033[32mRollback Last Deployment SuccessFul\033[0m"
                     break
         else:
             print "\033[31mYou Input parameter Is Not Exist\033[0m"
     except TypeError:
         args.print_help()
+

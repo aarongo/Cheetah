@@ -8,13 +8,10 @@ proxy_user=ecommerce_china
 proxy_password=xK8-4=gF
 download_url=http://182.50.117.44:8081/
 source_war_path=/software
-source_war_files="cybershop-front-0.0.1-SNAPSHOT.war"
+source_war_files="cybershop-mobile-0.0.1-SNAPSHOT.war"
 handle="$1"
-#定义 web 服务器 IP 数组
-web_address_list=(10.171.112.1 10.171.112.2 10.171.112.3 10.171.112.4 10.171.112.5 10.171.112.6
-                    10.171.112.7 10.171.112.8 10.171.112.9 10.171.112.10 10.171.112.11 10.171.112.12
-                    10.171.112.13 10.171.112.14 10.171.112.15 10.171.112.16 10.171.112.17 10.171.112.18
-                    10.171.112.19 10.171.112.20 10.171.112.21 10.171.112.22 10.171.112.23 10.171.112.24)
+#定义 web_app 服务器 IP 数组
+web_address_list=(10.171.35.1 10.171.35.2 10.171.35.17 10.171.35.18 10.171.35.19 10.171.35.20 10.171.35.21 10.171.35.22 10.171.35.23 10.171.35.24 10.171.35.25 10.171.35.26)
 #set GLobal Parameters End
 
 download_war(){
@@ -62,7 +59,7 @@ remote_handle(){
         scp ${source_war_path}/${source_war_files} ${web_address_list[${address}]}:${source_war_path}
         printf "\e[31mCopy Files Overed!!!\n\e[0m"
         printf "\e[31mHandle Remote %s\t%s\n\e[0m" "web$[address+1]"
-        ssh -tt ${web_address_list[${address}]} "/software/script/carrefour_front.py -d ${handle}"
+        ssh  ${web_address_list[${address}]} "/software/script/deploy_app_over.sh  ${handle}"
         if [ $? -ne 0 ]; then
             printf "\e[31mHandle ${handle} Is Failed\n\e[0m"
         else
@@ -76,7 +73,8 @@ tomcat_status(){
     for address in "${!web_address_list[@]}";
     do
     {
-            ssh -tt ${web_address_list[${address}]} "/software/script/carrefour_front.py -d ${handle}"
+            ssh -tt ${web_address_list[${address}]} "/software/script/deploy_app_over.sh  ${handle}"
+            echo -e "\033[31m-----------------------------------------\033[0m"
     }&
     wait
     done
@@ -95,3 +93,4 @@ case ${handle} in
       exit 1 # Command to come out of the program with status 1
       ;;
 esac
+
